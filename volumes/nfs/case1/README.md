@@ -8,14 +8,8 @@
 
 - PersistentVolumeClaim.spec.selector.matchLabels: To which PV will be bind.
 
-<<<<<<< HEAD
 ### create-rc1.yaml use centos image to bind PVC (pvc1) and updates continously index.html file in it.
 
-kubectl apply -f create-pv1.yaml
-kubectl apply -f create-pvc1.yaml
-#kubectl apply -f create-rc1.yaml
-=======
-Commands:
-  # kubectl apply -f create-pv1.yaml
-  # kubectl apply -f create-pvc1.yaml
->>>>>>> 9a50ce15e90de69ff23a852f1a2b596901bba4ba
+\# kubectl apply -f create-pv1.yaml
+\# kubectl apply -f create-pvc1.yaml
+\# kubectl apply -f create-rc1.yaml
