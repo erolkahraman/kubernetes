@@ -1,0 +1,57 @@
+ports:
+  - 6443/tcp
+  - 2379-2380/tcp
+  - 10250-10252/tcp
+  - 10255/tcp
+  - 6783/tcp
+  - 6783-6784/udp
+
+services:
+  - kubelet.service
+  - docker.service
+  - firewalld.service
+  - rsyslog.service
+
+required_packages:
+  - bash-completion
+  - epel-release
+  - https://download1.rpmfusion.org/free/el/updates/8/x86_64/r/rpmfusion-free-release-8-0.1.noarch.rpm
+  - wget
+  - git
+  - nfs-utils   
+  - net-tools
+
+workers:
+  - name: w-node1
+    ip: 172.16.0.111
+    fqdn: w-node1.kubtest.com
+  - name: w-node2
+    ip: 172.16.0.112
+    fqdn: w-node2.kubtest.com
+  - name: w-node3
+    ip: 172.16.0.113
+    fqdn: w-node3.kubtest.com
+masters:
+  - name: m-node1    
+    ip: 172.16.0.121
+    fqdn: m-node1.kubtest.com
+  - name: m-node2
+    ip: 172.16.0.122
+    fqdn: m-node2.kubtest.com
+  - name: m-node3
+    ip: 172.16.0.123
+    fqdn: m-node3.kubtest.com
+
+ssh_user_home: /root/
+
+init:
+  pod_net: 10.17.0.0/16
+  svc_net: 10.18.0.0/16
+  endpoint_ip: 172.16.0.
+  endpoint_port: 8443
+  
+ha:
+  packages:
+    - haproxy
+    - keepalived
+  config_file: "/etc/haproxy/haproxy.cfg"

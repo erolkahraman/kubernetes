@@ -1,0 +1,13 @@
+---
+- name: abc
+  hosts: localhost
+  vars:
+    packages:
+      - name: abc
+        ip: 123
+      - name: xyz
+        ip: 456
+  tasks:
+    - debug:
+        msg: "{{ packages[0] }}"
+#      with_items: "{{ packages }}"

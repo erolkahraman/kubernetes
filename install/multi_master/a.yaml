@@ -1,0 +1,42 @@
+---
+- name: Test Variable File
+  vars_files: env_vars.yaml
+  hosts: localhost
+  tasks:
+    - name: 1- Print vars..
+      shell: echo "{{ init.endpoint_ip }}":"{{ init.endpoint_port }}"
+      register: output1
+    - debug:
+        msg: "{{ output1.stdout }}"
+
+    - name: 2- Print vars...
+      shell: echo "{{ item }}"
+      with_items: "{{ ha.packages }}"
+      register: output2
+    - debug:
+         var: output2.results.item
+#        msg: "{{ output2.stdout_lines }}"
+#        msg: "{{ item.stdout }}"
+#        loop: "{{ output2.results }}"
+    - name: 3- Print vars...
+      tags:
+        - 3
+      debug: 
+        msg: "{{ groups['workers'] }}"
+#        var: groups['workers']
+    - name: 4 Print vars...
+      tags: 
+        - 4
+      debug:
+        msg: "{{ item }}"
+      with_items: "{{ masters1[0] }}"
+    - name: 5- Print to file
+      tags:
+        - 5
+      lineinfile:
+        path: deneme.txt
+        line: "{{ item.ip }} {{ item.name }} {{ item.fqdn }}"
+        state: present
+      with_items:
+        - "{{ masters1 }}"
+        - "{{ workers1 }}"

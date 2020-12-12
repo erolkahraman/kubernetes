@@ -1,0 +1,70 @@
+---
+  -
+    name: Set up master node
+    vars_files: env_vars.yaml
+    hosts: masters
+    vars: 
+      - ansible_ssh_user_home: /root/
+    tasks:
+      - name: Install Load Balancer
+        tags: i_lb
+        dnf:
+          name: "{{ item }}"
+        with_items: "{{ ha.packages }}"
+      - name: Edit HAProxy Config
+        tags: edit_hap
+        lineinfile:
+          path: "{{ ha.config_file }}"
+          line: |
+            frontend apiserver
+              bind *:"{{ ha.endpoint_port }}"
+              mode tcp
+              option tcplog
+              default_backend apiserver
+            backend apiserver
+              option httpchk GET /healthz
+              http-check expect status 200
+              mode tcp
+              option ssl-hello-chk
+              balance     roundrobin
+                server kubemaster-01 192.168.100.111:6443  check
+                server kubemaster-02 192.168.100.112:6443  check
+                server kubemaster-03 192.168.100.113:6443  check
+
+
+
+          
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ item }}"
+      with_items: "{{ nodes }}"
+
+
+ 
+      - name: Init kubeadm
+        shell: kubeadm init --pod-network-cidr="{{ init.pod_net }}" --service-cidr="{{ init.svc_net }}" --control-plane-endpoint "{{ init.endpoint_ip }}":"{{ init.endpoint_port }}" --uploadd-certs
+        register: output
+      - name: Createing join command file
+        local_action: copy content="{{ output.stdout_lines|join('\n') }}" dest="output.txt"
+      - name: Created join command file
+        tags: create_join
+        local_action: shell grep -A 2 ^kubeadm ./output.txt > join_cmd.sh && chmod +x join_cmd.sh
+      - name: Create {{ ansible_ssh_user_home }}.kube directory 
+        tags: c_dir
+        file:
+          path: "{{ ansible_ssh_user_home }}.kube"
+          state: directory
+      - name: Copy /etc/kubernetes/admin.conf to {{ ansible_ssh_user_home }}.kube/config
+        tags: abc
+        copy:
+          remote_src: yes
+          src: /etc/kubernetes/admin.conf
+          dest: "{{ ansible_ssh_user_home }}.kube/config"    
+          owner: "{{ ansible_ssh_user }}"
+          group: "{{ ansible_ssh_user }}"
+      - name: Add network plugin
+        tags: net
+        command: kubectl apply -f calico.yaml
+#        command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+#        shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
