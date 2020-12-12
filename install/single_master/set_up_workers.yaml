@@ -1,0 +1,14 @@
+---
+  -
+    name: Set up worker nodes
+    hosts: workers
+    vars_files: env_vars.yaml
+    tasks:
+    - name: Copy coin_cmd.sh to workers
+      copy:
+#        remote_src: yes
+        src: join_cmd.sh
+        dest: "{{ ssh_user_home }}join_cmd.sh"
+    - name: Add workers to cluster
+      shell: sh "{{ ssh_user_home }}join_cmd.sh"
+

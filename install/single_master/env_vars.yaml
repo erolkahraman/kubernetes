@@ -1,0 +1,29 @@
+ports:
+  - 6443/tcp
+  - 2379-2380/tcp
+  - 10250-10252/tcp
+  - 10255/tcp
+  - 6783/tcp
+  - 6783-6784/udp
+
+services:
+  - kubelet.service
+  - docker.service
+  - firewalld.service
+  - rsyslog.service
+
+required_packages:
+  - bash-completion
+  - epel-release
+  - https://download1.rpmfusion.org/free/el/updates/8/x86_64/r/rpmfusion-free-release-8-0.1.noarch.rpm
+  - wget
+  - git
+  - nfs-utils   
+  - net-tools
+
+nodes:
+  - 172.16.0.109 w-node1.kubtest.com w-node1
+  - 172.16.0.110 w-node2.kubtest.com w-node2
+  - 172.16.0.111 m-node1.kubtest.com m-node1
+
+ssh_user_home: /root/
