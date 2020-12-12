@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: centos-nfs
+spec:
+  replicas: 2
+  selector:
+    role: nfs-frontend
+  template:
+    metadata:
+      labels:
+        role: nfs-frontend
+    spec:
+      containers:
+      - name: centos
+        image: centos
+        command:
+          - sh
+          - -c
+          - 'while true; do date > /mnt/index.html; hostname >> /mnt/index.html; sleep $(($RANDOM % 5 + 5)); done'
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+            # name must match the volume name below
+            - name: nfs
+              mountPath: "/mnt"
+      volumes:
+      - name: nfs
+        persistentVolumeClaim:
+          claimName: pvc1
+
