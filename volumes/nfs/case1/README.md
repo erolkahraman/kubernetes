@@ -10,6 +10,6 @@
 
 ### create-rc1.yaml use centos image to bind PVC (pvc1) and updates continously index.html file in it.
 
-\# kubectl apply -f create-pv1.yaml
+\# kubectl apply -f create-pv1.yaml\n
 \# kubectl apply -f create-pvc1.yaml
 \# kubectl apply -f create-rc1.yaml
