@@ -8,6 +8,6 @@ create-pvc1.yaml creates PersistentVolumeClaim object and set values for;
 
 - PersistentVolumeClaim.spec.selector.matchLabels: To which PV will be bind.
 
-
-# kubectl apply -f create-pv1.yaml
-# kubectl apply -f create-pvc1.yaml
+Commands:
+  # kubectl apply -f create-pv1.yaml
+  # kubectl apply -f create-pvc1.yaml
