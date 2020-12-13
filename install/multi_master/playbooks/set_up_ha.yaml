@@ -1,0 +1,96 @@
+---
+- name: Set up Load Balancer
+  hosts: localhost
+  vars_files: ../conf/env_vars.yaml
+  tasks:
+    - name: Install Load Balancer
+      tags: i_lb
+      dnf:
+        name: "{{ item }}"
+      with_items: "{{ ha.packages }}"
+
+    - name: Edit HAProxy Config (1/2)
+      tags: edit_hap1
+      blockinfile:
+        path: "{{ ha.proxy.config_file }}"
+        state: present
+        block: |
+          frontend apiserver
+            bind *:{{ init.endpoint_port }}
+            mode tcp
+            option tcplog
+            default_backend apiserver
+          backend apiserver
+            option httpchk GET /healthz
+            http-check expect status 200
+            mode tcp
+            option ssl-hello-chk
+            balance     roundrobin
+
+    - name: Edit HAProxy Config (2/2)
+      tags: edit_hap2
+      lineinfile:
+        path: "{{ ha.proxy.config_file }}"
+        line: "    server {{ item.name }} {{ item.ip }}:6443 check"
+        state: present
+      with_items:
+        - "{{ masters }}"
+
+
+    - name: Edit Keepalived Config (1/2)
+      tags: edit_ka1
+      blockinfile:
+        path: "../conf/{{ item.name }}_keepalived.conf"
+        create: yes
+        state: present
+        block: |
+          global_defs {
+            router_id LVS_DEVEL
+           }
+          vrrp_script check_apiserver {
+            script "{{ ha.keepalived.script_file }}"
+            interval 3
+            weight -2
+            fall 10
+            rise 2
+          }
+          vrrp_instance VI_1 {
+            state {{ item.ha }}
+              interface {{ item.int }}
+              virtual_router_id 51
+              priority {{ item.priority }}
+              authentication {
+                  auth_type PASS
+                  auth_pass {{ ha.haproxy.password }}
+              }
+              virtual_ipaddress {
+                  {{ ha.haproxy.virtual_ip }}
+              }
+              track_script {
+                  check_apiserver
+      with_items:
+        - "{{ masters }}" 
+
+    - name: Copy keepalived config file
+      tags: 
+        - cp_ka_tmp
+      copy:
+        src: "../conf/{{ item.name }}_keepalived.conf" 
+        dest: "/etc/keepalived/keepalived.conf"
+      with_items:
+        - "{{ masters }}" 
+
+    - name: Set VIRTUAL-IP for check_apiserver.sh
+      tags: ['set_vip']
+      replace:
+        path: ../conf/check_apiserver.sh
+        regexp: 'VIRTUAL-IP'
+        replace: '{{ ha.haproxy.virtual_ip }}'
+        backup: yes
+
+    - name: Copy check_apiserver.sh script to masters
+      tags: 
+        - cp_script
+      copy:
+        src: ../conf/check_apiserver.sh
+        dest: "/etc/keepalived/check_apiserver.sh"

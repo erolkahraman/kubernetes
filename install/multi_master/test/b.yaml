@@ -1,0 +1,28 @@
+---
+- name: abc
+  hosts: localhost
+  vars:
+    packages:
+      - name: abc
+        ip: 123
+      - name: xyz
+        ip: 456
+  tasks:
+    - debug:
+        msg: "{{ packages[0] }}"
+    - debug:
+        var: hostvars
+    - debug:
+        msg: "{{ hostvars[item]['ansible_host'] }}"
+      with_items: "{{ groups['all'] }}"
+# Gather facts
+    - debug:
+        msg: "{{ ansible_facts }}"
+    - debug:
+        msg: "{{ ansible_default_ipv4 }}"
+    - debug:
+        msg: "{{ ansible_default_ipv4.alias }}"
+    - debug:
+        msg: "{{ ansible_devices.sda }}"
+    - debug:
+        msg: "{{ ansible_devices.sda.host }}"

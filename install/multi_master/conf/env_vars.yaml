@@ -35,13 +35,21 @@ masters:
   - name: m-node1    
     ip: 172.16.0.121
     fqdn: m-node1.kubtest.com
+    ha: master
+    priority: 101
+    int: ens32
   - name: m-node2
     ip: 172.16.0.122
     fqdn: m-node2.kubtest.com
+    ha: backup
+    priority: 100
+    int: ens32
   - name: m-node3
     ip: 172.16.0.123
     fqdn: m-node3.kubtest.com
-
+    ha: backup
+    priority: 100
+    int: ens32
 ssh_user_home: /root/
 
 init:
@@ -54,4 +62,9 @@ ha:
   packages:
     - haproxy
     - keepalived
-  config_file: "/etc/haproxy/haproxy.cfg"
+  haproxy:
+    config_file: "/etc/haproxy/haproxy.cfg"
+    password: 123qwe
+    virtual_ip: 2.1.1.1
+  keepalived:
+    script_file: "/etc/keepalived/check_apiserver.sh"

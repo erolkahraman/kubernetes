@@ -1,6 +1,6 @@
 ---
 - name: Test Variable File
-  vars_files: env_vars.yaml
+  vars_files: ../conf/env_vars.yaml
   hosts: localhost
   tasks:
     - name: 1- Print vars..
@@ -32,11 +32,11 @@
       with_items: "{{ masters1[0] }}"
     - name: 5- Print to file
       tags:
-        - 5
+        - t5
       lineinfile:
         path: deneme.txt
         line: "{{ item.ip }} {{ item.name }} {{ item.fqdn }}"
         state: present
       with_items:
-        - "{{ masters1 }}"
-        - "{{ workers1 }}"
+        - "{{ masters }}"
+        - "{{ workers }}"

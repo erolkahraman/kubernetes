@@ -2,45 +2,10 @@
   -
     name: Set up master node
     vars_files: env_vars.yaml
-    hosts: masters
+    hosts: localhost
     vars: 
       - ansible_ssh_user_home: /root/
     tasks:
-      - name: Install Load Balancer
-        tags: i_lb
-        dnf:
-          name: "{{ item }}"
-        with_items: "{{ ha.packages }}"
-      - name: Edit HAProxy Config
-        tags: edit_hap
-        lineinfile:
-          path: "{{ ha.config_file }}"
-          line: |
-            frontend apiserver
-              bind *:"{{ ha.endpoint_port }}"
-              mode tcp
-              option tcplog
-              default_backend apiserver
-            backend apiserver
-              option httpchk GET /healthz
-              http-check expect status 200
-              mode tcp
-              option ssl-hello-chk
-              balance     roundrobin
-                server kubemaster-01 192.168.100.111:6443  check
-                server kubemaster-02 192.168.100.112:6443  check
-                server kubemaster-03 192.168.100.113:6443  check
-
-
-
-          
-      lineinfile:
-        path: /etc/hosts
-        line: "{{ item }}"
-      with_items: "{{ nodes }}"
-
-
- 
       - name: Init kubeadm
         shell: kubeadm init --pod-network-cidr="{{ init.pod_net }}" --service-cidr="{{ init.svc_net }}" --control-plane-endpoint "{{ init.endpoint_ip }}":"{{ init.endpoint_port }}" --uploadd-certs
         register: output
