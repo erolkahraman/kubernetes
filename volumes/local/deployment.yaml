@@ -17,6 +17,8 @@ spec:
       containers:
       - name: centos
         image: centos:8
+        command: ["echo"]
+        args: ["$(date +%H:%M:%S)",">","/data/test.txt"]
         volumeMounts:
         - mountPath: "/mnt"
           name: storage
