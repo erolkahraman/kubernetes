@@ -12,6 +12,6 @@ POD -> PVC -> StorageClass -> NFS Provisioner -> NFS Storage
 
 HELM paket yöneticisi yardımı ile NFS provisioner in kurulmuş olması gerekiyor.
 
-## Kurulum
+#### Kurulum
 
 https://artifacthub.io/packages/helm/nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
