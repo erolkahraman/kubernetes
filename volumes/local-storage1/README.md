@@ -1,7 +1,8 @@
-=== Senaryo ===
-
+### Senaryo
 
 Deployment -> POD -> PVC -> PV (local storage)
+
+### Kurulum
 
 ```
   # kubectl apply -f pv.yaml
