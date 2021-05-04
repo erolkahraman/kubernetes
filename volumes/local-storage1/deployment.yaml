@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: centos-deployment
+  name: centos
   labels:
     app: centos
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: centos
+      app: centos-test
   template:
     metadata:
       labels:
-        app: centos
+        app: centos-test
     spec:
       containers:
       - name: centos
@@ -24,4 +24,4 @@ spec:
       volumes:
         - name: storage
           persistentVolumeClaim:
-            claimName: local-pvc
+            claimName: lpvc

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nfs-volume-pod
+spec:
+  containers:
+  - name: centos
+    image: centos:8
+    command:
+      - sh
+      - -c
+      - 'while true; do date > /mnt/index.html; hostname >> /mnt/index.html; sleep $(($RANDOM % 5 + 5)); done'
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: nfs
+      mountPath: "/mnt"
+  volumes:
+  - name: nfs
+    persistentVolumeClaim:
+      claimName: nfs-pvc
+
