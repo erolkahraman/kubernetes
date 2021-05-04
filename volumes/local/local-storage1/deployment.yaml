@@ -17,10 +17,9 @@ spec:
       containers:
       - name: centos
         image: centos:8
-        command: ["echo"]
-        args: ["$(date +%H:%M:%S)",">","/data/test.txt"]
+        command: ["sh","-c","while true; do echo $(date +%H:%M:%S) >> /mnt/data/test.txt; sleep 60; done"]
         volumeMounts:
-        - mountPath: "/mnt"
+        - mountPath: "/mnt/data"
           name: storage
       volumes:
         - name: storage
