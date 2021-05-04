@@ -1,4 +1,4 @@
-=== Senaryo
+=== Senaryo ===
 
 
 Deployment -> POD -> PVC -> PV (local storage)
