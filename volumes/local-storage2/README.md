@@ -1,9 +1,11 @@
 ### Senaryo
 
 
-POD -> Container1 \
-    |              Shared Storage
-    -> Container2 /
+```
+  POD -> Container1 \
+      |              Shared Storage
+      -> Container2 /
+```
 
 ### Kurulum
 
