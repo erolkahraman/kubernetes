@@ -2,9 +2,9 @@
 
 
 ```
-  POD -> Container1 \
-      |              Shared Storage
-      -> Container2 /
+      ,-> Container1 \
+  POD |                > Shared Storage
+      '-> Container2 /
 ```
 
 ### Kurulum
