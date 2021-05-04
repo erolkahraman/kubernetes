@@ -1,0 +1,9 @@
+---
+- name: Add workers to cluster (1/2)
+  copy:
+    src: /tmp/worker_join_cmd.sh
+    dest: /tmp/worker_join_cmd.sh
+    mode: 755
+
+- name: Add workers to cluster (2/2)
+  shell: sh /tmp/worker_join_cmd.sh

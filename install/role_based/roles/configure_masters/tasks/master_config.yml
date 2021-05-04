@@ -1,0 +1,42 @@
+---
+- name: Init kubeadm
+  shell: kubeadm init --pod-network-cidr="{{ pod_net }}" --service-cidr="{{ svc_net }}" --control-plane-endpoint "{{ endpoint_ip }}":"{{ endpoint_port }}" --upload-certs
+  register: output
+
+- name: Createing join command file
+  local_action: copy content="{{ output.stdout_lines|join('\n') }}" dest="/tmp/output.txt"
+
+- name: Created master join command file
+  tags: master_join_cmd
+  local_action: shell grep -A 3 '^\s.*kubeadm' /tmp/output.txt > /tmp/master_join_cmd.sh && chmod +x /tmp/master_join_cmd.sh
+
+- name: Created worker join command file
+  tags: worker_join_cmd
+  local_action: shell grep -A 2 ^kubeadm /tmp/output.txt > /tmp/worker_join_cmd.sh && chmod +x /tmp/worker_join_cmd.sh
+
+- name: Create {{ ansible_ssh_user_home }}.kube directory
+  tags: c_dir
+  file:
+    path: "{{ ansible_ssh_user_home }}.kube"
+    state: directory
+
+- name: Copy /etc/kubernetes/admin.conf to {{ ansible_ssh_user_home }}.kube/config
+  tags: abc
+  copy:
+    remote_src: yes
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ ansible_ssh_user_home }}.kube/config"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+
+- name: Copy calico.yaml
+  tags:
+    - copy_net_plugin
+  copy:
+    src: calico.yaml
+    dest: /tmp/calico.yaml
+
+- name: Add network plugin
+  tags: apply_net_plugin
+  shell: kubectl apply -f /tmp/calico.yaml
+

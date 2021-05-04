@@ -1,0 +1,39 @@
+---
+- name: Check Hosts
+  hosts: all-nodes
+  tasks:
+
+- name: Common Tasks
+  hosts: all-nodes
+  tags: all_common_tasks
+  tasks:
+  roles:
+    - common
+  
+- name: Security Tasks
+  hosts: all-nodes
+  tags: all_security_tasks
+  tasks:
+  roles:
+    - security
+
+- name: Network Load Balancer Tasks
+  hosts: masters
+  tags: all_nlb_tasks
+  tasks:
+  roles:
+    - nlb
+
+- name: Masters Tasks
+  hosts: masters
+  tags: all_masters_tasks
+  tasks:
+  roles:
+    - configure_masters  
+
+- name: Workers Tasks
+  hosts: workers
+  tags: all_workers_tasks
+  tasks:
+  roles:
+    - configure_workers

@@ -1,0 +1,39 @@
+---
+host:
+  net: 192.168.100.0/24
+
+workers:
+  - name: w-node1
+    ip: 192.168.100.125
+    fqdn: w-node1.uasis.net
+  - name: w-node2
+    ip: 192.168.100.126
+    fqdn: w-node2.uasis.net
+  - name: w-node3
+    ip: 192.168.100.127
+    fqdn: w-node3.uasis.net
+masters:
+  - name: m-node1    
+    ip: 192.168.100.124
+    fqdn: m-node1.uasis.net
+    role: master
+    priority: 101
+    int: ens192
+  - name: m-node2
+    ip: 192.168.100.122
+    fqdn: m-node2.uasis.net
+    role: backup
+    priority: 100
+    int: ens192
+  - name: m-node3
+    ip: 192.168.100.123
+    fqdn: m-node3.uasis.net
+    role: backup
+    priority: 100
+    int: ens192
+
+init:
+  pod_net: 10.17.0.0/16
+  svc_net: 10.18.0.0/16
+  endpoint_ip: 192.168.100.120
+  endpoint_port: 8443

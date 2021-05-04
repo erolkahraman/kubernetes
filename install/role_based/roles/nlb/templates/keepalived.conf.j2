@@ -1,0 +1,33 @@
+      global_defs {
+        router_id UASIS
+       }
+      vrrp_script check_apiserver {
+        script "{{ keepalived_script_file }}"
+        interval 3
+        weight -2
+        fall 10
+        rise 2
+       }
+      vrrp_instance UASIS_VI_01 {
+        {% if ansible_hostname == "m-node1" %}
+        state master
+        priority {{ keepalived_master_priority }}
+        {% else %}
+        state backup
+        priority {{ keepalived_backup_priority }}
+        {% endif %}
+        interface {{ net_if }}
+        virtual_router_id {{ keepalived_router_id }}
+        preempt
+        
+          authentication {
+              auth_type PASS
+              auth_pass {{ keepalived_password }}
+          }
+          virtual_ipaddress {
+              {{ keepalived_virtual_ip }}
+          }
+          track_script {
+              check_apiserver
+          }
+      }

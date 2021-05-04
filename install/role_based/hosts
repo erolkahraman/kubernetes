@@ -1,0 +1,21 @@
+# This is the default ansible 'hosts' file.
+#
+localhost ansible_connection=local
+
+[all-nodes]
+w-node1 ansible_host=w-node1.uasis.net ansible_connection=ssh ansible_ssh_user=root
+w-node2 ansible_host=w-node2.uasis.net ansible_connection=ssh ansible_ssh_user=root
+w-node3 ansible_host=w-node3.uasis.net ansible_connection=ssh ansible_ssh_user=root
+m-node1 ansible_host=m-node1.uasis.net ansible_connection=ssh ansible_ssh_user=root
+m-node2 ansible_host=m-node2.uasis.net ansible_connection=ssh ansible_ssh_user=root
+m-node3 ansible_host=m-node3.uasis.net ansible_connection=ssh ansible_ssh_user=root
+
+[masters]
+m-node1 ansible_host=m-node1.uasis.net ansible_connection=ssh ansible_ssh_user=root ansible_ssh_user_home=/root/ net_if=ens192
+m-node2 ansible_host=m-node2.uasis.net ansible_connection=ssh ansible_ssh_user=root ansible_ssh_user_home=/root/ net_if=ens192
+m-node3 ansible_host=m-node3.uasis.net ansible_connection=ssh ansible_ssh_user=root ansible_ssh_user_home=/root/ net_if=ens192
+
+[workers]
+w-node1 ansible_host=w-node1.uasis.net ansible_connection=ssh ansible_ssh_user=root
+w-node2 ansible_host=w-node2.uasis.net ansible_connection=ssh ansible_ssh_user=root
+w-node3 ansible_host=w-node3.uasis.net ansible_connection=ssh ansible_ssh_user=root

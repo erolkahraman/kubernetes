@@ -1,0 +1,7 @@
+---
+- name: debug
+  hosts: masters
+  tasks:
+    - name: Hostvars
+      debug:
+        msg: "{{ ansible_ssh_host }}"

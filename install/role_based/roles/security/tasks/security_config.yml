@@ -1,0 +1,45 @@
+---
+- name: Disable SELinux
+  selinux:
+    state: disabled
+
+- name: Adding ports to firewalld
+  tags: firewalld
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+    immediate: yes
+  with_items: "{{ ports }}"
+
+- name: Enable Masquerade
+  firewalld:
+    masquerade: yes
+    state: enabled
+    permanent: yes
+    immediate: yes
+
+- name: Add rich rule for hosts
+  firewalld:
+    rich_rule: rule family="ipv4" source address="{{ host.net }}" accept
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- name: Enable firewall logging (blocked) (1/2)
+  tags: fw_log
+  replace:
+    path: /etc/firewalld/firewalld.conf
+    regexp: 'LogDenied=off'
+    replace: 'LogDenied=all'
+  notify: restart firewall
+
+- name: Enable firewall logging (blocked) (2/2)
+  tags: fw_log
+  copy:
+    dest: /etc/rsyslog.d/firewalld-dropd.conf
+    content: |
+      :msg,contains,"_DROP" {{ firewall_log_file }}
+      :msg,contains,"_REJECT" {{ firewall_log_file }} 
+      & stop
+  notify: restart rsyslog

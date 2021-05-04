@@ -1,0 +1,31 @@
+---
+- name: Add docker repository
+  tags:
+    - add_docker_repo
+  yum_repository:
+    name: docker-ce-stable
+    description: Docker CE Stable - $basearch
+    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: https://download.docker.com/linux/centos/gpg
+- name: Add kubernetes repository
+  tags:
+    - add_kubernetes_repo
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgcheck: yes
+    enabled: yes
+    repo_gpgcheck: yes
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    exclude:
+      - kubeadm
+      - kubectl
+      - kubelet
+- name: Add local repository
+  tags:
+    - add_local_repo
+  shell: dnf config-manager --add-repo http://centos8repo.b740.net/centos8.repo
+

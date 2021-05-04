@@ -1,0 +1,6 @@
+---
+pod_net: 10.17.0.0/16
+svc_net: 10.18.0.0/16
+endpoint_ip: 192.168.100.120
+endpoint_port: 8443
+

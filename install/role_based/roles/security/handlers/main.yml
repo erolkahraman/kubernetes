@@ -1,0 +1,12 @@
+---
+- name: restart firewall
+  systemd:
+    name: firewalld.service
+    state: started
+    enabled: True
+
+- name: restart rsyslog
+  systemd:
+    name: rsyslog.service
+    state: started
+    enabled: True

@@ -1,0 +1,24 @@
+---
+- name: Add master node to cluster (1/2)
+  copy:
+    src: /tmp/master_join_cmd.sh
+    dest: /tmp/master_join_cmd.sh
+    mode: 755
+
+- name: Add master node to cluster (2/2)
+  shell: sh /tmp/master_join_cmd.sh
+
+- name: Create {{ ansible_ssh_user_home }}.kube directory
+  tags: c_dir
+  file:
+    path: "{{ ansible_ssh_user_home }}.kube"
+    state: directory
+
+- name: Copy /etc/kubernetes/admin.conf to {{ ansible_ssh_user_home }}.kube/config
+  tags: abc
+  copy:
+    remote_src: yes
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ ansible_ssh_user_home }}.kube/config"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"

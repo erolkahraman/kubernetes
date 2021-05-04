@@ -1,0 +1,5 @@
+---
+# tasks file for common
+- include: pre_config.yml
+- include: add_repos.yml 
+- include: install_packages.yml 

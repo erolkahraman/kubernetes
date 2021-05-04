@@ -1,0 +1,5 @@
+---
+- include: master_config.yml
+  when: ansible_hostname == "m-node1"
+- include: add_masters.yml
+  when: ansible_hostname != "m-node1"

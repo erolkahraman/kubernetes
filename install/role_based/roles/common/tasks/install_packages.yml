@@ -1,0 +1,33 @@
+---
+- name: Install docker-ce
+  tags:
+    - i_docker
+  shell: dnf install -y https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm docker-ce --nobest
+  notify: restart docker
+
+- name: Install kubernetes
+  tags: i_kubernetes
+  dnf:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    disable_excludes: kubernetes
+  notify: restart kubelet
+
+- name: Install required packages
+  tags: i_others
+  dnf:
+    name: "{{ required_packages }}"
+    disable_gpg_check: yes
+    state: present
+
+- name: Update OS
+  tags:
+    - update_os
+  dnf:
+    name: "*"
+    disablerepo: "*"
+    enablerepo: b740-centos8-AppStream,b740-centos8-BaseOS,b740-centos8-extras
+    state: latest
+

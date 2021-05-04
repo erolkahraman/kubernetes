@@ -1,0 +1,54 @@
+---
+- name: Install HAProxy and Keepalived Packages
+  tags: i_lb
+  dnf:
+    name: "{{ item }}"
+  with_items: "{{ packages }}"
+
+- name: Edit HAProxy Config (1/2)
+  tags: 
+    - edit_hap1
+    - haproxy
+  blockinfile:
+    path: "{{ haproxy_config_file }}"
+    state: present
+    block: |
+      frontend apiserver
+        bind *:{{ init.endpoint_port }}
+        mode tcp
+        option tcplog
+        default_backend apiserver
+      backend apiserver
+        option httpchk GET /healthz
+        http-check expect status 200
+        mode tcp
+        option ssl-hello-chk
+        balance     roundrobin
+
+- name: Edit HAProxy Config (2/2)
+  tags: 
+    - edit_hap2
+    - haproxy
+  lineinfile:
+    path: "{{ haproxy_config_file }}"
+    line: "    server {{ item.name }} {{ item.ip }}:6443 check"
+    state: present
+  with_items:
+    - "{{ masters }}"
+  notify: restart haproxy
+
+- name: Set VIRTUAL-IP for check_apiserver.sh
+  tags: nlb_set_vip
+  template:
+    src: check_apiserver.sh.j2
+    dest: "{{ keepalived_script_file }}"
+    mode: 755
+
+- name: Edit Keepalived Config (1/2)
+  tags: nlb_edit_keepalived_conf
+  template:
+    src: keepalived.conf.j2
+    dest: "{{ keepalived_config_file }}"
+    force: yes
+    backup: yes
+  notify: restart keepalived

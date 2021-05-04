@@ -1,0 +1,8 @@
+---
+- name: create file
+  hosts: masters
+  tasks:
+    - name: test
+      shell: touch {{ item.name }}.txt
+      when:  ansible_ssh_host == "m-node1.uasis.net"
+      with_items: "{{ masters }}" 

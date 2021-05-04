@@ -1,0 +1,19 @@
+---
+## HAProxy
+haproxy_config_file: "/etc/haproxy/haproxy.cfg"
+
+
+## Keepalived
+
+keepalived_password: 123qwe
+keepalived_virtual_ip: 192.168.100.120
+keepalived_master_priority: 100
+keepalived_backup_priority: 50
+keepalived_router_id: 151
+keepalived_script_file: /etc/keepalived/check_apiserver.sh
+keepalived_config_file: /etc/keepalived/keepalived.conf
+
+packages:
+  - haproxy
+  - keepalived
+

@@ -1,0 +1,16 @@
+---
+- name: reload sysctl
+  command: sysctl --system
+
+- name: restart kubelet
+  systemd:
+    name: kubelet.service
+    state: started
+    enabled: True
+
+- name: restart docker
+  systemd:
+    name: docker.service
+    state: started
+    enabled: True
+
