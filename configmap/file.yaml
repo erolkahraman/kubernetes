@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: file-cm
+data: 
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <body>
+    
+    <h1>BAŞLIK</h1>
+    
+    <p>INDEX.html sayfasıdır.</p>
+    
+    </body>
+    </html>

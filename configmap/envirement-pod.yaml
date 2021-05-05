@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cm-pod-env
+spec:
+  containers:
+  - name: centos
+    image: centos:8
+    env:
+    - name: DB_NAME
+      valueFrom:
+        configMapKeyRef:
+          name: env-cm
+          key: DB_NAME
+    - name: DB_HOST_PORT
+      valueFrom:
+        configMapKeyRef:
+          name: env-cm
+          key: DB_HOST_PORT
+    command:
+      - sh
+      - -c
+      - 'while true; do echo $DB_NAME, $DB_HOST_PORT; sleep 180; done'
